@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Logic XML Patch Tool</title>
+<meta charset="UTF-8" />
+</head>
+<body>
+<div class="file">
+<label>Logic XML Patch Tool</label><br>
+<input type="file" accept=".xml">
+</div>
+<div class="download"></div>
+<script type="text/javascript">
+const download = document.querySelector('.download');
+const inputFile = document.querySelector('input[type=file]');
+
+//「ファイルを選択」でローカルファイルが設定された際の処理
+const setFile = (event) => {
+  //エリア表示のリセット
+  download.setAttribute('style','display: none;');
+  
+  const fileObject = event.target.files[0];
+  
+  const rwgXml = new FileReader();
+  rwgXml.addEventListener('load', (event) => loadedFile(event));
+  rwgXml.readAsText(fileObject);
+}
+inputFile.addEventListener('change', (event) => setFile(event));
+
+//ファイルの読み込みが完了した際の処理
+const loadedFile = (event) => {
+  //ファイル内の文字列の取り出し
+  const loadedXml = event.target.result;
+
+  //DOM準備
+  const parser = new DOMParser();
+  const temporaryXml = parser.parseFromString(loadedXml, 'application/xml');
+
+  /* 読み込んだXMLのDOMを操作したい場合はこのあたりに書く */
+  var partName= temporaryXml.getElementsByTagName("part-name");
+
+  //出力用Xml用意
+  const outputXml = new XMLSerializer();
+  let outputXmlText = outputXml.serializeToString(temporaryXml);
+
+  //blobの作成
+  const blob = new Blob([outputXmlText], {type: 'application/xml'});
+}
+</script>
+</body>
+</html>
