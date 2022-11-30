@@ -45,6 +45,14 @@ const loadedFile = (event) => {
 
   //blobの作成
   const blob = new Blob([outputXmlText], {type: 'application/xml'});
+
+  //ファイルをダウンロードさせる
+  const a = document.createElement('a');
+  a.href = window.URL.createObjectURL(blob);
+  a.textContent = 'ダウンロード';
+  a.download = 'output.xml';
+
+  download.appendChild(a);
 }
 </script>
 </body>
