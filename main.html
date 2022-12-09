@@ -9,6 +9,7 @@
 <label>Logic XML Patch Tool</label><br>
 <input type="file" accept=".xml">
 </div>
+<button id="download-button">Download XML File</button>
 <div class="download"></div>
 <script type="text/javascript">
 const download = document.querySelector('.download');
@@ -34,14 +35,26 @@ const loadedFile = (event) => {
 
   //DOM準備
   const parser = new DOMParser();
-  const temporaryXml = parser.parseFromString(loadedXml, 'application/xml');
+  const xmlDoc = parser.parseFromString(loadedXml, 'application/xml');
 
   /* 読み込んだXMLのDOMを操作したい場合はこのあたりに書く */
-  var partName= temporaryXml.getElementsByTagName("part-name");
+  var partName= xmlDoc.getElementsByTagName("part-name");
+  
+  // Select all the midi-program elements in the XML
+  var midiProgramElements = xmlDoc.getElementsByTagName("midi-program");
+  var instrumentNameElements = xmlDoc.getElementsByTagName("instrument-name");
+
+  // Loop through the midi-program elements and set their content to 1
+  for (var i = 0; i < midiProgramElements.length; i++) {
+    midiProgramElements[i].innerHTML = "1";
+  }
+  for (var i = 0; i < instrumentNameElements.length; i++) {
+    instrumentNameElements[i].innerHTML = "Piano";
+  }
 
   //出力用Xml用意
   const outputXml = new XMLSerializer();
-  let outputXmlText = outputXml.serializeToString(temporaryXml);
+  let outputXmlText = outputXml.serializeToString(xmlDoc);
 
   //blobの作成
   const blob = new Blob([outputXmlText], {type: 'application/xml'});
@@ -51,8 +64,28 @@ const loadedFile = (event) => {
   a.href = window.URL.createObjectURL(blob);
   a.textContent = 'ダウンロード';
   a.download = 'output.xml';
-
   download.appendChild(a);
+
+  // Get a reference to the button
+  var downloadButton = document.getElementById("download-button");
+
+  // Add an event listener that will run when the button is clicked
+  downloadButton.addEventListener("click", function() {
+    // Create an XMLHttpRequest object
+    var xhr = new XMLHttpRequest();
+    xhr.responseType = "text";
+    xhr.open("GET", a.href);
+    xhr.send();
+
+    // When the response is received, access the content of the file
+    // using the response property of the XMLHttpRequest object
+    xhr.onload = function() {
+      var xmlString = xhr.response;
+      // Do something with the XML string, such as parsing it
+      // and modifying its contents
+    }
+  });
+
 }
 </script>
 </body>
