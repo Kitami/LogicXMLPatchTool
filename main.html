@@ -9,16 +9,13 @@
 <label>Logic XML Patch Tool</label><br>
 <input type="file" accept=".xml">
 </div>
-<div class="download"><a id="download" download="output.xml"></a>ダウンロード</div>
+<a id="download" download="output.xml">ダウンロード</a>
 <script type="text/javascript">
 const download = document.querySelector('.download');
 const inputFile = document.querySelector('input[type=file]');
 
 //「ファイルを選択」でローカルファイルが設定された際の処理
 const setFile = (event) => {
-  //エリア表示のリセット
-  download.setAttribute('style','display: none;');
-  
   const fileObject = event.target.files[0];
   
   const rwgXml = new FileReader();
