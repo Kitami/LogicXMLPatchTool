@@ -9,8 +9,7 @@
 <label>Logic XML Patch Tool</label><br>
 <input type="file" accept=".xml">
 </div>
-<button id="download-button">Download XML File</button>
-<div class="download"></div>
+<div class="download"><a id="download" download="output.xml"></a>ダウンロード</div>
 <script type="text/javascript">
 const download = document.querySelector('.download');
 const inputFile = document.querySelector('input[type=file]');
@@ -60,32 +59,8 @@ const loadedFile = (event) => {
   const blob = new Blob([outputXmlText], {type: 'application/xml'});
 
   //ファイルをダウンロードさせる
-  const a = document.createElement('a');
+  const a = document.getElementById('download');
   a.href = window.URL.createObjectURL(blob);
-  a.textContent = 'ダウンロード';
-  a.download = 'output.xml';
-  download.appendChild(a);
-
-  // Get a reference to the button
-  var downloadButton = document.getElementById("download-button");
-
-  // Add an event listener that will run when the button is clicked
-  downloadButton.addEventListener("click", function() {
-    // Create an XMLHttpRequest object
-    var xhr = new XMLHttpRequest();
-    xhr.responseType = "text";
-    xhr.open("GET", a.href);
-    xhr.send();
-
-    // When the response is received, access the content of the file
-    // using the response property of the XMLHttpRequest object
-    xhr.onload = function() {
-      var xmlString = xhr.response;
-      // Do something with the XML string, such as parsing it
-      // and modifying its contents
-    }
-  });
-
 }
 </script>
 </body>
