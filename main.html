@@ -17,7 +17,6 @@ const inputFile = document.querySelector('input[type=file]');
 //「ファイルを選択」でローカルファイルが設定された際の処理
 const setFile = (event) => {
   const fileObject = event.target.files[0];
-  
   const rwgXml = new FileReader();
   rwgXml.addEventListener('load', (event) => loadedFile(event));
   rwgXml.readAsText(fileObject);
@@ -32,8 +31,6 @@ const loadedFile = (event) => {
   //DOM準備
   const parser = new DOMParser();
   const xmlDoc = parser.parseFromString(loadedXml, 'application/xml');
-
-  /* 読み込んだXMLのDOMを操作したい場合はこのあたりに書く */
   var partName= xmlDoc.getElementsByTagName("part-name");
   
   // Select all the midi-program elements in the XML
@@ -51,12 +48,13 @@ const loadedFile = (event) => {
   //出力用Xml用意
   const outputXml = new XMLSerializer();
   let outputXmlText = outputXml.serializeToString(xmlDoc);
-
-  //blobの作成
   const blob = new Blob([outputXmlText], {type: 'application/xml'});
 
   //ファイルをダウンロードさせる
+  const originalFileName = inputFile.files[0].name;
+  const newFileName = originalFileName.replace(/\.xml$/, '_new.xml');
   const a = document.getElementById('download');
+  a.download = newFileName;
   a.href = window.URL.createObjectURL(blob);
 }
 </script>
