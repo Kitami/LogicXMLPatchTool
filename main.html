@@ -7,6 +7,10 @@
 <body>
   <div class="file">
     <label>Logic XML Patch Tool</label><br>
+    <div id="drop-zone">
+    <p>ここにファイルをドロップ</p>
+  </div>
+  <div class="file">
     <input type="file" accept=".xml">
   </div>
   <a id="download" download="output.xml">ダウンロード</a>
@@ -14,6 +18,26 @@
   <script>
     const inputFile = document.querySelector('input[type=file]');
     const downloadLink = document.getElementById('download');
+    const dropZone = document.getElementById('drop-zone');
+
+    dropZone.addEventListener('dragover', (event) => {
+      event.preventDefault();
+      dropZone.style.borderColor = '#66ccff';
+    });
+    dropZone.addEventListener('dragleave', () => {
+      dropZone.style.borderColor = '#ccc';
+    });
+    dropZone.addEventListener('drop', (event) => {
+      event.preventDefault();
+      dropZone.style.borderColor = '#ccc';
+      const fileObject = event.dataTransfer.files[0];
+      handleFile(fileObject);
+    });
+    const handleFile = (fileObject) => {
+      const rwgXml = new FileReader();
+      rwgXml.addEventListener('load', () => loadedFile(rwgXml.result));
+      rwgXml.readAsText(fileObject);
+    };
 
     inputFile.addEventListener('change', (event) => {
       const fileObject = event.target.files[0];
