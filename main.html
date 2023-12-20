@@ -1,62 +1,40 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Logic XML Patch Tool</title>
-<meta charset="UTF-8" />
+  <meta charset="UTF-8">
+  <title>Logic XML Patch Tool</title>
 </head>
 <body>
-<div class="file">
-<label>Logic XML Patch Tool</label><br>
-<input type="file" accept=".xml">
-</div>
-<a id="download" download="output.xml">ダウンロード</a>
-<script type="text/javascript">
-const download = document.querySelector('.download');
-const inputFile = document.querySelector('input[type=file]');
+  <div class="file">
+    <label>Logic XML Patch Tool</label><br>
+    <input type="file" accept=".xml">
+  </div>
+  <a id="download" download="output.xml">ダウンロード</a>
 
-//「ファイルを選択」でローカルファイルが設定された際の処理
-const setFile = (event) => {
-  const fileObject = event.target.files[0];
-  const rwgXml = new FileReader();
-  rwgXml.addEventListener('load', (event) => loadedFile(event));
-  rwgXml.readAsText(fileObject);
-}
-inputFile.addEventListener('change', (event) => setFile(event));
+  <script>
+    const inputFile = document.querySelector('input[type=file]');
+    const downloadLink = document.getElementById('download');
 
-//ファイルの読み込みが完了した際の処理
-const loadedFile = (event) => {
-  //ファイル内の文字列の取り出し
-  const loadedXml = event.target.result;
+    inputFile.addEventListener('change', (event) => {
+      const fileObject = event.target.files[0];
+      const rwgXml = new FileReader();
+      rwgXml.addEventListener('load', () => loadedFile(rwgXml.result));
+      rwgXml.readAsText(fileObject);
+    });
 
-  //DOM準備
-  const parser = new DOMParser();
-  const xmlDoc = parser.parseFromString(loadedXml, 'application/xml');
-  var partName= xmlDoc.getElementsByTagName("part-name");
-  
-  // Select all the midi-program elements in the XML
-  var midiProgramElements = xmlDoc.getElementsByTagName("midi-program");
-  var instrumentNameElements = xmlDoc.getElementsByTagName("instrument-name");
-
-  // Loop through the midi-program elements and set their content to 1
-  for (var i = 0; i < midiProgramElements.length; i++) {
-    midiProgramElements[i].innerHTML = "1";
-  }
-  for (var i = 0; i < instrumentNameElements.length; i++) {
-    instrumentNameElements[i].innerHTML = "Piano";
-  }
-
-  //出力用Xml用意
-  const outputXml = new XMLSerializer();
-  let outputXmlText = outputXml.serializeToString(xmlDoc);
-  const blob = new Blob([outputXmlText], {type: 'application/xml'});
-
-  //ファイルをダウンロードさせる
-  const originalFileName = inputFile.files[0].name;
-  const newFileName = originalFileName.replace(/\.xml$/, '_new.xml');
-  const a = document.getElementById('download');
-  a.download = newFileName;
-  a.href = window.URL.createObjectURL(blob);
-}
-</script>
+    const loadedFile = (xmlContent) => {
+      const parser = new DOMParser();
+      const xmlDoc = parser.parseFromString(xmlContent, 'application/xml');
+      xmlDoc.querySelectorAll('midi-program').forEach(element => element.innerHTML = '1');
+      xmlDoc.querySelectorAll('instrument-name').forEach(element => element.innerHTML = 'Piano');
+      const outputXmlText = new XMLSerializer().serializeToString(xmlDoc);
+      const blob = new Blob([outputXmlText], { type: 'application/xml' });
+      const originalFileName = inputFile.files[0].name;
+      const newFileName = originalFileName.replace(/\.xml$/, '_new.xml');
+      downloadLink.download = newFileName;
+      downloadLink.href = window.URL.createObjectURL(blob);
+      downloadLink.click();
+    };
+  </script>
 </body>
 </html>
